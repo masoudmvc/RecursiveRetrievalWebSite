@@ -26,5 +26,14 @@ namespace RecursiveRetrievalWebSite.Service.Extensions
 
             return hrefResult;
         }
+
+        public static bool IsExternalLink(this string href)
+        {
+            var hrefValue = href.Trim();
+
+            return hrefValue.ToLower().StartsWith("http") || 
+                   hrefValue.ToLower().StartsWith("//") || 
+                   hrefValue.ToLower().StartsWith("www.");
+        }
     }
 }
