@@ -10,8 +10,6 @@ namespace RecursiveRetrievalWebSite.Infrastructure
                 .ConfigureServices(services =>
                 {
                     ServiceRegistration.Configure(services);
-                    //services.AddTransient<Program>();
-                    //services.AddScoped<ICustomer, Customer>();
                 });
         }
     }

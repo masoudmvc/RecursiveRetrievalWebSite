@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using RecursiveRetrievalWebSite.Service.Services;
+using RecursiveRetrievalWebSite.Service.Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,22 +12,8 @@ namespace RecursiveRetrievalWebSite.Infrastructure
         public static void Configure(IServiceCollection services)
         {
             services.AddTransient<Program>();
-            services.AddTransient<ICustomer, Customer>();
+            services.AddScoped<IRecursiveRetrievalService, RecursiveRetrievalService>();
+            services.AddScoped<IInternetService, InternetService>();
         }
     }
-
-    #region test classes
-    public interface ICustomer
-    {
-        string GetName();
-    }
-    public class Customer : ICustomer
-    {
-        public string GetName()
-        {
-            return "masoud";
-        }
-    }
-
-    #endregion
 }
