@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using RecursiveRetrievalWebSite.Service.Helpers;
+using RecursiveRetrievalWebSite.Service.Models;
 using RecursiveRetrievalWebSite.Service.Services.Contracts;
 using System.Net;
 using System.Threading.Tasks;
@@ -18,9 +19,16 @@ namespace RecursiveRetrievalWebSite.Service.Services
         {
             using (WebClient Client = new WebClient())
             {
-                var path = @"C:\Drive-D\WorkArea\pak\" + destinationFolder ?? "" + @"\";
-                FileManager.CreateFolderIfNotExist(path);
-                Client.DownloadFile(url, path + destinationFilename);
+                FileManager.CreateFolderIfNotExist(destinationFolder);
+                Client.DownloadFile(url, destinationFolder + destinationFilename);
+            }
+        }
+        public void DownloadFile(FileInfoModel info)
+        {
+            using (WebClient Client = new WebClient())
+            {
+                FileManager.CreateFolderIfNotExist(info.Path);
+                Client.DownloadFile(info.Url, info.Path + info.FileName);
             }
         }
 
@@ -54,5 +62,7 @@ namespace RecursiveRetrievalWebSite.Service.Services
             HtmlWeb web = new HtmlWeb();
             return web.Load(url);
         }
+
+        
     }
 }

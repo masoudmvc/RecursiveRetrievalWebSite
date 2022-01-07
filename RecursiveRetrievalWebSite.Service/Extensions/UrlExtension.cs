@@ -1,4 +1,6 @@
 ﻿
+using System.Linq;
+
 namespace RecursiveRetrievalWebSite.Service.Extensions
 {
     public static class UrlExtension
@@ -22,6 +24,50 @@ namespace RecursiveRetrievalWebSite.Service.Extensions
                 hrefResult = hrefResult.Substring(0, index);
 
             return hrefResult;
+        }
+
+        public static string RemoveBeginingSlash(this string url)
+        {
+            if (url == null) return null;
+
+            var hrefResult = url.Trim();
+
+            while(hrefResult.StartsWith("/"))
+                hrefResult = hrefResult.Substring(1, hrefResult.Length - 1);
+
+            return hrefResult;
+        }
+
+        public static string LastFragment(this string url)
+        {
+            if (url == null) return null;
+
+            var hrefResult = url.Trim();
+
+            if (!hrefResult.Contains("/")) return hrefResult;
+
+            var temp = hrefResult.Replace("//","/").Split("/").Where(x => x != string.Empty).ToArray();
+
+            return temp[temp.Length - 1];
+        }
+
+        public static string MakeDiskPath(this string url)
+        {
+            if (url == null) return null;
+
+            var hrefResult = url.Trim().Replace("//", "/");
+
+            if (!hrefResult.Contains("/")) return hrefResult;
+
+            var temp = hrefResult.Split("/").Where(x => x != string.Empty).ToArray();
+
+            var result = "";
+            for (int i = 0; i < temp.Length - 1; i++)
+            {
+                result += temp[i] + @"\";
+            }
+
+            return result;
         }
     }
 }

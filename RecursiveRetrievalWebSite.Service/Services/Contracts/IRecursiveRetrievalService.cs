@@ -7,6 +7,6 @@ namespace RecursiveRetrievalWebSite.Service.Services.Contracts
     public interface IRecursiveRetrievalService
     {
         void TraverseAndDownload(string rootUrl, string rootHddPath);
-        List<string> GetHtmlLinks(string url, LinkType type, HtmlNodeCollection allLinks);
+        LinkModel GetLinks(string url, LinkType type, HtmlNodeCollection allLinks);
     }
 }
