@@ -3,7 +3,6 @@ using RecursiveRetrievalWebSite.Service.Helpers;
 using RecursiveRetrievalWebSite.Service.Models;
 using RecursiveRetrievalWebSite.Service.Services.Contracts;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace RecursiveRetrievalWebSite.Service.Services
 {
@@ -23,6 +22,10 @@ namespace RecursiveRetrievalWebSite.Service.Services
                 Client.DownloadFile(url, destinationFolder + destinationFilename);
             }
         }
+
+        /// <summary>
+        /// This method downloads the desired file and moves it to the desired path on the disk. different signature.
+        /// </summary>
         public void DownloadFile(FileInfoModel info)
         {
             using (WebClient Client = new WebClient())
@@ -57,6 +60,9 @@ namespace RecursiveRetrievalWebSite.Service.Services
             }
         }
 
+        /// <summary>
+        /// using HtmlAgilityPack to load an Html page in memory.
+        /// </summary>
         public HtmlDocument GetHtml(string url)
         {
             HtmlWeb web = new HtmlWeb();

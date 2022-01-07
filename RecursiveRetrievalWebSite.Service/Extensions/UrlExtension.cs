@@ -1,5 +1,4 @@
-﻿
-using System.Linq;
+﻿using System.Linq;
 
 namespace RecursiveRetrievalWebSite.Service.Extensions
 {
@@ -26,6 +25,9 @@ namespace RecursiveRetrievalWebSite.Service.Extensions
             return hrefResult;
         }
 
+        /// <summary>
+        /// This extension remove the first slash if exist.
+        /// </summary>
         public static string RemoveBeginingSlash(this string url)
         {
             if (url == null) return null;
@@ -38,6 +40,9 @@ namespace RecursiveRetrievalWebSite.Service.Extensions
             return hrefResult;
         }
 
+        /// <summary>
+        /// this method return the last segment of an url.
+        /// </summary>
         public static string LastFragment(this string url)
         {
             if (url == null) return null;
@@ -51,6 +56,9 @@ namespace RecursiveRetrievalWebSite.Service.Extensions
             return temp[temp.Length - 1];
         }
 
+        /// <summary>
+        /// this extension convert relative url's segments to disk relative path.
+        /// </summary>
         public static string MakeDiskPath(this string url)
         {
             if (url == null) return null;

@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using RecursiveRetrievalWebSite.Service.Extensions;
+using RecursiveRetrievalWebSite.Service.Helpers;
 using RecursiveRetrievalWebSite.Service.Models;
 using RecursiveRetrievalWebSite.Service.Services.Contracts;
 using System.Collections.Generic;
@@ -14,25 +15,43 @@ namespace RecursiveRetrievalWebSite.Service.Services
         private string _urlRoot;
         private string _hddRoot;
 
+        /// <summary>
+        /// this is the landing method that calls main recursive method. hear we check everything or do any preparation before
+        /// the process start.
+        /// </summary>
         public RecursiveRetrievalService(IInternetService internetService)
         {
             _internetService = internetService;
             _allAppliedLinked = new LinkModel();
             _htmlLinks = new List<string>();
             _urlRoot = @"https://tretton37.com/";
-            _hddRoot = @"C:\Drive-D\WorkArea\pak\";
         }
 
-        public void TraverseAndDownload(string rootUrl, string rootHddPath)
+        public void TraverseAndDownload(string rootHddPath)
         {
-            RecursiveMethod(_hddRoot, true);
+            _hddRoot = rootHddPath.EndsWith(@"\") ?  rootHddPath : rootHddPath + @"\";
+
+            if (_internetService.CheckIfUrlIsValidAndAvailable(_urlRoot))
+            {
+                ConsolLog.Success($"Targeted website ({_urlRoot}) is valid and available.");
+                ConsolLog.Info($"The process is starting...");
+                RecursiveMethod(_hddRoot, true);
+            }
+            else
+                ConsolLog.Error($"Targeted website ({_urlRoot}) is invalid or there is any problem with your internet connection!");
+
         }
 
-        public void RecursiveMethod(string hddPath, bool websiteRoot = false, string relatedUrl = null)
+        /// <summary>
+        /// This method is the main method that recursively load root url and its child until the last child doesn't have any
+        /// related link (page).
+        /// </summary>
+        public void RecursiveMethod(string hddPath, bool isWebsiteRoot = false, string relatedUrl = null)
         {
             var currentUrl = _urlRoot + relatedUrl;
-            DownloadHtml(hddPath, websiteRoot, relatedUrl);
+            DownloadHtml(hddPath, isWebsiteRoot, relatedUrl);
 
+            ConsolLog.Warn($"scaning {currentUrl}...");
             var htmlDoc = _internetService.GetHtml(currentUrl);
 
             var allLinksScript = SelectNodesByType(htmlDoc, LinkType.Script);
@@ -52,9 +71,7 @@ namespace RecursiveRetrievalWebSite.Service.Services
 
             if (resultHtml.InternalLinks.Count > 0)
             {
-                //var tee = resultHtml.InternalLinks[0];
-                //RecursiveMethod(hddPath, false, tee);
-
+                // todo: this loop should be parallel loop (Parallel.For)
                 resultHtml.InternalLinks.ForEach(link =>
                 {
                     RecursiveMethod(hddPath, false, link);
@@ -63,6 +80,9 @@ namespace RecursiveRetrievalWebSite.Service.Services
 
         }
 
+        /// <summary>
+        /// Getting required elements in the loaded Html.
+        /// </summary>
         public LinkModel GetLinks(string url, LinkType type, HtmlNodeCollection allLinks)
         {
             var result = new LinkModel { ListType = type };
@@ -99,6 +119,9 @@ namespace RecursiveRetrievalWebSite.Service.Services
             return result;
         }
 
+        /// <summary>
+        /// Html element selector depends on link type. 
+        /// </summary>
         private HtmlNodeCollection SelectNodesByType(HtmlDocument htmlDoc, LinkType type)
         {
             switch (type)
@@ -117,6 +140,9 @@ namespace RecursiveRetrievalWebSite.Service.Services
 
         }
 
+        /// <summary>
+        /// specify the required attribute of the html element (tag)
+        /// </summary>
         private string SelectAttribute(LinkType type)
         {
             switch (type)
@@ -135,24 +161,45 @@ namespace RecursiveRetrievalWebSite.Service.Services
 
         }
 
+        /// <summary>
+        /// concentrated method to download assets except html file
+        /// </summary>
         private void DownloadPreparedLink(LinkModel list)
         {
             list.InternalLinks.ForEach(x =>
             {
-                var fileInfo = new FileInfoModel(x, null);
-                _internetService.DownloadFile(fileInfo);
+                var fileInfo = new FileInfoModel(x, null, _hddRoot);
+                try
+                {
+                    _internetService.DownloadFile(fileInfo);
+                    ConsolLog.Info($"{fileInfo.FileName} downloded to {fileInfo.Path}");
+                }
+                catch
+                {
+                    ConsolLog.Error($"Error occured while downloding {fileInfo.FileName}!");
+                }
             });
         }
 
-        private void DownloadHtml(string hddPath, bool websiteRoot = false, string relatedUrl = null)
+        /// <summary>
+        /// concentrated method to download Htmls
+        /// </summary>
+        private void DownloadHtml(string hddPath, bool isWebsiteRoot = false, string relatedUrl = null)
         {
-            if (!websiteRoot)
+            if (!isWebsiteRoot)
             {
                 if (relatedUrl.StartsWith("/"))
                 {
                     var folder = hddPath + relatedUrl.MakeDiskPath();
-
-                    _internetService.DownloadFile(_urlRoot + relatedUrl + @"/", folder, relatedUrl.LastFragment() + ".html");
+                    try
+                    {
+                        _internetService.DownloadFile(_urlRoot + relatedUrl + @"/", folder, relatedUrl.LastFragment() + ".html");
+                        ConsolLog.Info($"{relatedUrl.LastFragment()} downloded to {folder}");
+                    }
+                    catch
+                    {
+                        ConsolLog.Error($"Error occured while downloding {relatedUrl.LastFragment()}!");
+                    }
                 }
                 else
                 {
@@ -162,6 +209,7 @@ namespace RecursiveRetrievalWebSite.Service.Services
             else
             {
                 _internetService.DownloadFile(_urlRoot, hddPath, @"index.html");
+                ConsolLog.Warn($"index.html downloded to {hddPath}");
             }
         }
     }

@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using RecursiveRetrievalWebSite.Service.Services;
 using RecursiveRetrievalWebSite.Service.Services.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RecursiveRetrievalWebSite.Infrastructure
 {

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace RecursiveRetrievalWebSite.Service.Models
 {
     public class FileInfoModel
     {
-        public FileInfoModel(string link, string beforePath)
+        /// <summary>
+        /// preparing a model to specify filename and location on disk, depends on the link fragments
+        /// </summary>
+        public FileInfoModel(string link, string beforePath, string hddRoot)
         {
             FileName = "";
-            Path = @"C:\Drive-D\WorkArea\pak\";
+            Path = hddRoot;
 
             if (!string.IsNullOrEmpty(beforePath))
             {
@@ -38,13 +38,8 @@ namespace RecursiveRetrievalWebSite.Service.Models
                 FileName = link;
                 Path = null;
             }
-
-            //if (!string.IsNullOrEmpty(beforePath))
-            //{
-            //    Path = beforePath + Path;
-            //    var temp = link.Split("/");
-            //}
         }
+
         public string FileName { get; set; }
         public string Path { get; set; }
         public string FullPath { get; set; }

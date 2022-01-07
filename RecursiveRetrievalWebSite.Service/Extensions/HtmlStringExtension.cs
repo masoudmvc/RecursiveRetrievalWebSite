@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace RecursiveRetrievalWebSite.Service.Extensions
 {
     public static class HtmlStringExtension
@@ -27,6 +24,9 @@ namespace RecursiveRetrievalWebSite.Service.Extensions
             return hrefResult;
         }
 
+        /// <summary>
+        /// Checks if the link is local or external
+        /// </summary>
         public static bool IsExternalLink(this string href)
         {
             var hrefValue = href.Trim();

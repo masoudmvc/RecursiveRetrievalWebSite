@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using RecursiveRetrievalWebSite.Infrastructure;
 using RecursiveRetrievalWebSite.Service.Services.Contracts;
-using System;
 
 namespace RecursiveRetrievalWebSite
 {
@@ -25,8 +24,11 @@ namespace RecursiveRetrievalWebSite
 
         public void Run(string[] args)
         {
-            //var test = _internet.GetHtml(@"https://tretton37.com/");
-            _rrService.TraverseAndDownload(@"https://tretton37.com/", @"C:\Drive-D\WorkArea\pak");
+            _logger.LogInformation("Logger service active...");
+
+            var diskLocationToSaveFiles = @"C:\MasCodeChallange";
+
+            _rrService.TraverseAndDownload(diskLocationToSaveFiles);
         }
     }
 }
